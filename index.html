@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام الدفع الإلكتروني - النسخة التجريبية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .warning-banner {
+            background: #ff4757;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 3px solid #ff3838;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.9; }
+            50% { opacity: 1; }
+            100% { opacity: 0.9; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        header {
+            background: linear-gradient(90deg, #003087 0%, #009cde 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .logo span {
+            color: #ffc439;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            width: 300px;
+            padding: 30px;
+            border-left: 1px solid #eee;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #555;
+        }
+
+        .nav-item:hover {
+            background: #e3f2fd;
+            color: #003087;
+            transform: translateX(-5px);
+        }
+
+        .nav-item.active {
+            background: #003087;
+            color: white;
+        }
+
+        .nav-icon {
+            margin-left: 15px;
+            font-size: 1.5rem;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .balance-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .balance-amount {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .currency {
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .action-btn {
+            background: white;
+            border: 2px solid #003087;
+            color: #003087;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .action-btn:hover {
+            background: #003087;
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .transactions {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-amount.positive {
+            color: #00b09b;
+            font-weight: bold;
+        }
+
+        .transaction-amount.negative {
+            color: #ff4757;
+            font-weight: bold;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .compliance-badge {
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 10px;
+            font-size: 0.8rem;
+        }
+
+        /* تصميم متجاوب */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-left: none;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .balance-amount {
+                font-size: 2rem;
+            }
+        }
+
+        /* تحسينات للعربية */
+        .rtl-text {
+            text-align: right;
+            line-height: 1.8;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="warning-banner">
+        <i class="fas fa-exclamation-triangle"></i>
+        ⚠️ هذا موقع تجريبي - جميع المعاملات وهمية للاختبار فقط ⚠️
+        <br><small>لا تستخدم أموال حقيقية - النظام تحت التطوير</small>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo">د<span>فـ</span>ع</div>
+            <div class="tagline">نظام الدفع الإلكتروني الآمن</div>
+            <div style="margin-top: 20px;">
+                <span class="compliance-badge">مرخص من البنك المركزي</span>
+                <span class="compliance-badge">PCI DSS متوافق</span>
+                <span class="compliance-badge">تشفير 256-bit</span>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="nav-item active">
+                    <i class="fas fa-home nav-icon"></i>
+                    <span>الرئيسية</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-wallet nav-icon"></i>
+                    <span>محفظتي</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-exchange-alt nav-icon"></i>
+                    <span>تحويل الأموال</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-history nav-icon"></i>
+                    <span>سجل المعاملات</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-credit-card nav-icon"></i>
+                    <span>البطاقات المصرفية</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-shield-alt nav-icon"></i>
+                    <span>الأمان والخصوصية</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-cog nav-icon"></i>
+                    <span>الإعدادات</span>
+                </div>
+                
+                <div style="margin-top: 40px; padding: 20px; background: #e3f2fd; border-radius: 10px;">
+                    <h4>رصيدك المتاح</h4>
+                    <div style="font-size: 2rem; font-weight: bold; color: #003087;">0.00 <small>ر.س</small></div>
+                    <small style="color: #666;">لم تقم بإضافة أموال بعد</small>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <div class="balance-card">
+                    <div class="balance-label">الرصيد الإجمالي</div>
+                    <div class="balance-amount">0.00 <span class="currency">ر.س</span></div>
+                    <div style="opacity: 0.9; font-size: 0.9rem;">
+                        <i class="fas fa-lock"></i> محمي بتشفير متقدم
+                    </div>
+                </div>
+
+                <h2 style="color: #003087; margin-bottom: 20px;">إجراءات سريعة</h2>
+                <div class="action-buttons">
+                    <div class="action-btn" onclick="showModal('deposit')">
+                        <i class="fas fa-plus-circle action-icon"></i>
+                        إضافة أموال
+                    </div>
+                    <div class="action-btn" onclick="showModal('send')">
+                        <i class="fas fa-paper-plane action-icon"></i>
+                        إرسال أموال
+                    </div>
+                    <div class="action-btn" onclick="showModal('request')">
+                        <i class="fas fa-hand-holding-usd action-icon"></i>
+                        طلب تحويل
+                    </div>
+                    <div class="action-btn" onclick="showModal('withdraw')">
+                        <i class="fas fa-university action-icon"></i>
+                        سحب للبنك
+                    </div>
+                </div>
+
+                <div class="transactions">
+                    <h3 style="color: #003087; margin-bottom: 20px;">
+                        <i class="fas fa-history"></i> أحدث المعاملات
+                    </h3>
+                    <div class="transaction-item">
+                        <div>
+                            <div style="font-weight: bold;">لم تقم بأي معاملات بعد</div>
+                            <small style="color: #666;">ستظهر معاملاتك هنا</small>
+                        </div>
+                        <div class="transaction-amount">0.00 ر.س</div>
+                    </div>
+                    <div class="transaction-item" style="opacity: 0.6;">
+                        <div>
+                            <div>تحويل تجريبي</div>
+                            <small>2024-01-01</small>
+                        </div>
+                        <div class="transaction-amount positive">+500.00 ر.س</div>
+                    </div>
+                    <div class="transaction-item" style="opacity: 0.6;">
+                        <div>
+                            <div>دفع فاتورة</div>
+                            <small>2024-01-01</small>
+                        </div>
+                        <div class="transaction-amount negative">-150.00 ر.س</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: #f0f8ff; border-radius: 10px;">
+                    <h4><i class="fas fa-shield-alt"></i> نصائح أمنية</h4>
+                    <p class="rtl-text">
+                        1. لا تشارك كلمة المرور أو رمز التحقق مع أحد<br>
+                        2. تأكد من عنوان البريد الإلكتروني للمستلم<br>
+                        3. استخدم التحقق الثنائي<br>
+                        4. راجع سجل معاملاتك بانتظام
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2024 نظام الدفع الإلكتروني. جميع الحقوق محفوظة.</p>
+            <p style="opacity: 0.8; font-size: 0.8rem; margin-top: 10px;">
+                هذا نموذج تجريبي - غير مخصص للاستخدام الفعلي<br>
+                النموذج رقم: v1.0.0 | بيئة: تطوير | آخر تحديث: اليوم
+            </p>
+        </footer>
+    </div>
+
+    <!-- النوافذ المنبثقة -->
+    <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%;">
+            <h2 id="modal-title" style="color: #003087;"></h2>
+            <p id="modal-message" style="margin: 20px 0;"></p>
+            <div style="text-align: center; margin-top: 30px;">
+                <button onclick="closeModal()" style="background: #ff4757; color: white; border: none; padding: 10px 30px; border-radius: 5px; cursor: pointer;">
+                    إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showModal(action) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const message = document.getElementById('modal-message');
+            
+            const actions = {
+                deposit: {
+                    title: 'إضافة أموال',
+                    message: 'هذه الميزة غير مفعلة في النسخة التجريبية. في النظام الحقيقي، ستتصل هذه الصفحة ببوابة دفع آمنة.'
+                },
+                send: {
+                    title: 'إرسال أموال',
+                    message: 'ميزة التحويل قيد التطوير. تأكد من صحة بيانات المستلم قبل أي تحويل.'
+                },
+                request: {
+                    title: 'طلب تحويل',
+                    message: 'يمكنك طلب الأموال من مستخدمين آخرين. الميزة قيد التطوير.'
+                },
+                withdraw: {
+                    title: 'سحب إلى البنك',
+                    message: 'للسحب إلى حسابك البنكي، يجب ربط حساب بنكي أولاً. الميزة قيد التطوير.'
+                }
+            };
+            
+            title.textContent = actions[action].title;
+            message.textContent = actions[action].message;
+            modal.style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // منع أي إجراء حقيقي - للتوضيح فقط
+        document.querySelectorAll('.action-btn, .nav-item').forEach(element => {
+            element.addEventListener('click', function(e) {
+                if(!this.onclick) {
+                    showModal('deposit');
+                }
+            });
+        });
+
+        // رسالة تحذير عند تحميل الصفحة
+        window.onload = function() {
+            console.warn('⚠️ تحذير: هذا نموذج تجريبي لنظام دفع. لا يستخدم أموال حقيقية.');
+            console.info('للتطوير الحقيقي، ابدأ بـ:');
+            console.info('1. خادم Backend مع Node.js/Python');
+            console.info('2. قاعدة بيانات PostgreSQL');
+            console.info('3. نظام مصادقة JWT مع تحقق ثنائي');
+            console.info('4. واجهة برمجة API آمنة (HTTPS فقط)');
+        };
+    </script>
+</body>
+</html>
